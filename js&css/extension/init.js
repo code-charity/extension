@@ -28,6 +28,8 @@ function bodyReady() {
 	if (extension.ready && extension.domReady) {
 		extension.features.addScrollToTop();
 		extension.features.font();
+		extension.features.changeThumbnailsPerRow?.();
+		extension.features.clickableLinksInVideoDescriptions();
 	}
 }
 
@@ -44,6 +46,7 @@ extension.events.on('init', function () {
 	extension.features.relatedVideos();
 	extension.features.comments();
 	extension.features.openNewTab();
+	extension.features.removeListParamOnNewTab();	
 	bodyReady();
 });
 

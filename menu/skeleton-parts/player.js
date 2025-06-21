@@ -79,6 +79,11 @@ extension.skeleton.main.layers.section.player.on.click = {
 			storage: 'pause_while_typing_on_youtube',
 			id: 'pause_while_typing_on_youtube',
 		},
+		prevent_shorts_autoloop:{
+			component: 'switch',
+			text: 'preventShortVideoAutoloop',
+			storage: 'prevent_shorts_autoloop',
+		},
 		autoplay_disable: {
 			component: 'switch',
 			text: 'autoplayDisable',
@@ -717,6 +722,10 @@ extension.skeleton.main.layers.section.player.on.click = {
 				}
 			}
 		},
+		disable_auto_dubbing: {
+			component: 'switch',
+			text: 'disableAutoDubbing'
+		},
 		player_quality: {
 			component: 'select',
 			text: 'quality',
@@ -1112,10 +1121,7 @@ extension.skeleton.main.layers.section.player.on.click = {
 				return options;
 			}
 		},
-		player_fit_to_win_button: {
-			component: 'switch',
-			text: 'player_fit_to_win_button'
-		},
+	
 		player_cinema_mode_button: {
 			component: 'switch',
 			text: 'player_cinema_mode_button',
@@ -1156,6 +1162,11 @@ extension.skeleton.main.layers.section.player.on.click = {
 			component: 'section',
 			variant: 'card',
 			title: 'extraButtonsBelowThePlayer',
+			below_player_keyscene: {
+				component: 'switch',
+				text: 'keyScene',
+				value: true
+			},
 			below_player_screenshot: {
 				component: 'switch',
 				text: 'screenshot',
@@ -1174,8 +1185,27 @@ extension.skeleton.main.layers.section.player.on.click = {
 			copy_video_id: {
 				component: 'switch',
 				text: 'copyVideoId',
-				value: true
-			}
+				id: "copy-video-id",
+				value: false
+			},
+			copy_video_url: {
+				component: 'switch',
+				text: 'copyVideoUrl',
+				value: false
+			},
+		},
+		extraRightControlButtons: {
+			component: 'section',
+			variant: 'card',
+			title: 'extraRightControlButtons',
+			player_fit_to_win_button: {
+				component: 'switch',
+				text: 'player_fit_to_win_button'
+			},
+			player_rewind_and_forward_buttons: {
+				component: 'switch',
+				text: 'player_rewind_and_forward_buttons'
+			},
 		},
 		player_hide_controls_options: {
 			component: "button",
@@ -1183,6 +1213,6 @@ extension.skeleton.main.layers.section.player.on.click = {
 			on: {
 				click: 'main.layers.section.appearance.on.click.player.on.click.player_hide_controls_options.on.click'
 			}
-		},
+		}
 	}
 };

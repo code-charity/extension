@@ -574,3 +574,114 @@ extension.features.openNewTab = function () {
 		}
 	}
 }
+
+/*--------------------------------------------------------------
+# REMOVE &list=... WHEN OPENING VIDEOS IN NEW TAB
+--------------------------------------------------------------*/
+extension.features.removeListParamOnNewTab = function () {
+	// 옵션이 켜져있지 않으면 종료
+	if (extension.storage.get("remove_list_param_from_links") !== true) {
+		return;
+	}
+	// 이전에 등록된 핸들러가 있다면 제거
+	if (this._removeListParamHandler) {
+		document.removeEventListener('click', this._removeListParamHandler, true);
+	}
+	// 새로운 핸들러 정의
+	this._removeListParamHandler = function (event) {
+		if (event.ctrlKey || event.metaKey || event.button === 1) {
+			let anchor = event.target;
+			while (anchor && anchor.tagName !== 'A') {
+				anchor = anchor.parentElement;
+			}
+			if (
+				anchor &&
+				anchor.href &&
+				anchor.href.includes('watch?v=') &&
+				anchor.href.includes('&list=')
+			) {
+				event.preventDefault();
+				const cleaned = anchor.href.replace(/&list=[^&]+/, '');
+				window.open(cleaned, '_blank');
+			}
+		}
+	};
+
+	// 핸들러 등록
+	document.addEventListener('click', this._removeListParamHandler, true);
+};
+
+extension.features.removeListParamOnNewTab();
+
+/*--------------------------------------------------------------
+# CLICKABLE LINKS IN VIDEO DESCRIPTIONS
+--------------------------------------------------------------*/
+extension.features.clickableLinksInVideoDescriptions = function () {
+	if (extension.storage.get("clickable_links_in_description") !== true) {
+		return;
+	}
+
+	document.addEventListener("contextmenu", (e) => {
+		// Check if the clicked element is a yt-formatted-string with the class we're targeting
+		const clickedElement = e.target.closest(".style-scope.ytd-video-renderer");
+
+		if (clickedElement) {
+			// Grab the plain text inside the yt-formatted-string (looking for links or URLs)
+			const textContent = clickedElement.innerText;
+	
+			// Extract URL using a simple regex (you can customize it to be more accurate)
+			const urlRegex = /\bhttps?:\/\/[^\s]+/g;
+			const match = textContent.match(urlRegex);
+	
+			if (match) {
+				// Copy the found URL to the clipboard
+				navigator.clipboard.writeText(match[0]).catch((err) => {
+					console.error("Failed to copy: ", err);
+				});
+	
+				// Prevent the default right-click menu from showing
+				e.preventDefault();
+		}
+		// If no URL found, the normal right-click behavior will happen
+		}
+	});
+}
+
+/*--------------------------------------------------------------
+# CHANGE THE NUMBER OF THUMBNAILS PER ROW
+--------------------------------------------------------------*/
+extension.features.changeThumbnailsPerRow = async function () {
+	var value = await extension.storage.get('change_thumbnails_per_row');
+
+	if (!value || value === 'null') 
+		return;
+
+	const applyGridLayout = () => {
+		//Check if we are on the subscriptions page
+		if (location.href.indexOf('feed/subscriptions') !== -1) {
+			document.querySelectorAll('[style]').forEach(el => {
+				if (el.style.getPropertyValue('--ytd-rich-grid-items-per-row')) {
+					el.style.setProperty('--ytd-rich-grid-items-per-row', value);
+					el.style.setProperty('--ytd-rich-grid-item-min-width', '220px');
+					el.style.setProperty('--ytd-rich-grid-item-max-width', '1fr');
+				}
+			});
+		} else {		
+			const grid = document.querySelector('ytd-rich-grid-renderer');
+			if (!grid) 
+				return;
+
+			// Apply custom values
+			grid.style.setProperty('--ytd-rich-grid-items-per-row', value);
+			grid.style.setProperty('--ytd-rich-grid-item-min-width', '220px');
+			grid.style.setProperty('--ytd-rich-grid-item-max-width', '1fr');
+		}
+  	};
+
+	// Apply initially
+	applyGridLayout();
+
+	// Reapply when YouTube replaces content
+	const observer = new MutationObserver(applyGridLayout);
+	observer.observe(document.body, { childList: true, subtree: true });
+};
