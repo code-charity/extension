@@ -206,6 +206,10 @@ extension.skeleton.main.layers.section.shortcuts = {
 						}
 					}
 				},
+				shortcut_jump_to_key_scene: {
+					component: 'shortcut',
+					text: 'keyScene'
+				},
 				shortcut_seek_next_chapter: {
 					component: 'shortcut',
 					text: 'seekNextChapter'
@@ -249,6 +253,10 @@ extension.skeleton.main.layers.section.shortcuts = {
 						}
 					}
 				},
+				shortcut_activate_fit_to_window: {
+					component: 'shortcut',
+					text: 'activateFitToWindow'
+				},
 				shortcut_activate_captions: {
 					component: 'shortcut',
 					text: 'activateCaptions',
@@ -268,13 +276,13 @@ extension.skeleton.main.layers.section.shortcuts = {
 					component: 'shortcut',
 					text: 'popupPlayer'
 				},
+				shortcut_screenshot: {
+					component: 'shortcut',
+					text: 'screenshot'
+				},
 				shortcut_toggle_loop: {
 					component: 'shortcut',
 					text: 'loop'
-				},
-				shortcut_stats_for_nerds: {
-					component: 'shortcut',
-					text: 'statsForNerds'
 				},
 				shortcut_picture_in_picture: {
 					component: 'shortcut',
@@ -284,9 +292,9 @@ extension.skeleton.main.layers.section.shortcuts = {
 					component: 'shortcut',
 					text: 'autoPictureInPicture'
 				},
-				shortcut_screenshot: {
+				shortcut_stats_for_nerds: {
 					component: 'shortcut',
-					text: 'screenshot'
+					text: 'statsForNerds'
 				},
 				shortcut_toggle_controls: {
 					component: 'shortcut',
