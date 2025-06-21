@@ -466,6 +466,11 @@ extension.skeleton.main.layers.section.appearance.on.click.details = {
 				text: "hideDate",
 				tags: "hide,remove"
 			},
+			disable_likes_animation: {
+		                component: "switch",
+		                text: "disableLikesAnimation",
+		                tags: "likes,animation,disable"
+		        },
 			api: {
 				component: 'section',
 				variant: 'card',
@@ -474,6 +479,10 @@ extension.skeleton.main.layers.section.appearance.on.click.details = {
 				how_long_ago_the_video_was_uploaded: {
 					component: "switch",
 					text: "howLongAgoTheVideoWasUploaded"
+				},
+				exact_date: {
+					component: "switch",
+					text: "showExactDate"
 				},
 				channel_videos_count: {
 					component: "switch",
@@ -538,6 +547,11 @@ extension.skeleton.main.layers.section.appearance.on.click.hide_detail_button = 
 				below_player_loop: {
 					component: 'switch',
 					text: 'loop',
+					value: true
+				},
+				below_player_keyscene: {
+					component: 'switch',
+					text: 'keyScene',
 					value: true
 				}
 			},

@@ -138,6 +138,8 @@ ImprovedTube.shortcutsListeners = {
 		ImprovedTube.input.pressed.shift = false;
 	}
 };
+/*--- jump To Key Scene ----*/
+ImprovedTube.shortcutJumpToKeyScene = ImprovedTube.jumpToKeyScene;
 /*------------------------------------------------------------------------------
 Ambient lighting
 ------------------------------------------------------------------------------*/
@@ -374,7 +376,11 @@ ImprovedTube.shortcutResetPlaybackSpeed = function () {
 4.7.19 GO TO SEARCH BOX
 ------------------------------------------------------------------------------*/
 ImprovedTube.shortcutGoToSearchBox = function () {
-	document.querySelector('input#search')?.focus();
+	document.querySelector('input[name="search_query"]')?.click();
+	document.querySelector('input#search')?.click();
+	if (ImprovedTube.originalFocus) { HTMLElement.prototype.focus = originalFocus }
+	document.querySelector('input[name="search_query"]')?.focus();
+	document.querySelector('input#search')?.focus(); 
 };
 /*------------------------------------------------------------------------------
 4.7.20 ACTIVATE FULLSCREEN
@@ -569,4 +575,7 @@ ImprovedTube.shortcutRotateVideo = function () {
 		transform += ' scale(' + (is_vertical_video ? player.clientWidth : player.clientHeight) / (is_vertical_video ? player.clientHeight : player.clientWidth) + ')';
 	}
 	video.style.setProperty("transform", transform);
+};
+ImprovedTube.shortcutActivateFitToWindow = function() {
+	ImprovedTube.toggleFitToWindow();
 };
