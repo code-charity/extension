@@ -46,6 +46,83 @@ extension.skeleton.main.layers.section.general = {
 				cursorLighting: {
 					component: 'switch',
 					text: 'cursorLighting',
+				},		
+				search: {
+					component: 'section',
+					variant: 'card',
+					title: 'Youtube_Search',
+					remove_related_search_results: {
+						component: 'switch',
+						text: 'removeRelatedSearchResults'
+					},
+					open_new_tab: {
+						component: "switch",
+						text: "openNewTab",
+					},
+					remove_shorts_reel_search_results: {
+						component: 'switch',
+						text: 'removeShortsReelSearchResults'
+					}
+				},
+				remove_home_page_shorts: {
+					component: 'switch',
+					text: 'hideHomePageShorts',
+					id: 'remove-home-page-shorts'
+				},
+				remove_subscriptions_shorts: {
+					component: 'switch',
+					text: 'atSubscriptions',
+					id: 'remove-subscriptions-shorts'
+				},
+				remove_trending_shorts: {
+					component: 'switch',
+					text: 'atTrending'
+				},
+				remove_history_shorts: {
+					component: 'switch',
+					text: 'atHistory'
+				},
+				hide_ai_summary: {
+					component: 'switch',
+					text: 'hideAISummary',
+					id: 'hide-ai-summary'
+				},
+				youtube_home_page: {
+					component: 'select',
+					text: 'youtubeHomePage',
+					options: [{
+						text: 'home',
+						value: '/'
+					}, {
+						text: 'trending',
+						value: '/feed/trending'
+					}, {
+						text: 'subscriptions',
+						value: '/feed/subscriptions'
+					}, {
+						text: 'history',
+						value: '/feed/history'
+					}, {
+						text: 'watchLater',
+						value: '/playlist?list=WL'
+					}, {
+						text: 'search',
+						value: 'search'
+					}, {
+						text: 'liked',
+						value: '/playlist?list=LL'
+					}, {
+						text: 'library',
+						value: '/feed/library'
+					}, {
+						text: 'withoutVideos',
+						value: 'hidecontent'
+					}],
+					tags: 'trending,subscriptions,history,watch,search,undistracted,zen'
+				},
+				collapse_of_subscription_sections: {
+					component: 'switch',
+					text: 'collapseOfSubscriptionSections'
 				},
 				ads: {
 					text: 'ads',
@@ -87,74 +164,10 @@ extension.skeleton.main.layers.section.general = {
 					component: 'countComponent',
 					class: "count-component",
 				},
-				search: {
-					component: 'section',
-					variant: 'card',
-					title: 'Youtube_Search',
-					remove_related_search_results: {
-						component: 'switch',
-						text: 'removeRelatedSearchResults'
-					},
-					open_new_tab: {
-						component: "switch",
-						text: "openNewTab",
-					},
-					remove_shorts_reel_search_results: {
-						component: 'switch',
-						text: 'removeShortsReelSearchResults'
-					}
-				},
-				remove_home_page_shorts: {
+				hide_banner_ads: {
 					component: 'switch',
-					text: 'hideHomePageShorts',
-					id: 'remove-home-page-shorts'
-				},
-				remove_subscriptions_shorts: {
-					component: 'switch',
-					text: 'atSubscriptions'
-				},
-				remove_trending_shorts: {
-					component: 'switch',
-					text: 'atTrending'
-				},
-				remove_history_shorts: {
-					component: 'switch',
-					text: 'atHistory'
-				},
-				collapse_of_subscription_sections: {
-					component: 'switch',
-					text: 'collapseOfSubscriptionSections'
-				},
-				youtube_home_page: {
-					component: 'select',
-					text: 'youtubeHomePage',
-					options: [{
-						text: 'home',
-						value: '/'
-					}, {
-						text: 'trending',
-						value: '/feed/trending'
-					}, {
-						text: 'subscriptions',
-						value: '/feed/subscriptions'
-					}, {
-						text: 'history',
-						value: '/feed/history'
-					}, {
-						text: 'watchLater',
-						value: '/playlist?list=WL'
-					}, {
-						text: 'search',
-						value: 'search'
-					}, {
-						text: 'liked',
-						value: '/playlist?list=LL'
-					}, {
-						text: 'library',
-						value: '/feed/library'
-					}],
-					tags: 'trending,subscriptions,history,watch,search'
-				}
+					text: 'hideBannerAds'
+				} 
 			},
 			embed: {
 				component: 'section',
@@ -229,6 +242,37 @@ extension.skeleton.main.layers.section.general = {
 						value: 'maxresdefault'
 					}],
 					tags: 'preview quality'
+				},
+				change_thumbnails_per_row: {
+					component: 'select',
+					text: 'changeThumbnailsPerRow',
+					options: [{
+						text: '4',
+						value: '4'
+					}, {
+						text: '5',
+						value: '5'
+					}, {
+						text: '6',
+						value: '6'
+					}, {
+						text: '7',
+						value: '7'
+					}, {
+						text: '8',
+						value: '8'
+					}],
+					tags: 'change thumbnails per row'
+				},
+				thumbnail_size: {
+					component: "select",
+					text: "Thumbnail Size",
+					storage: "thumbnail_size",
+					options: [
+						{ text: "Default", value: "default" },
+						{ text: "Small", value: "small" },
+						{ text: "x-small", value: "x-small" }
+					]
 				}
 			}, section_2: {
 				component: 'section',
@@ -400,6 +444,14 @@ extension.skeleton.main.layers.section.general = {
 					component: 'switch',
 					text: 'removeContextButtons',
 				},
+				remove_list_param_from_links: {
+					component: 'switch',
+					text: 'removePlaylistParam'
+				},
+				clickable_links_in_description: {
+					component: 'switch',
+					text: 'clickableLinksInDescription'
+				}
 			}
 		}
 	},
