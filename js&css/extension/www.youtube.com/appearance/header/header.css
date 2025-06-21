@@ -43,7 +43,25 @@ html[it-header-transparent-alternative=true] ytd-masthead #search-icon-legacy {b
 /* Make chips filter bar barely visible */
 html[it-header-transparent-alternative=true] #chips-wrapper {opacity: 0.7 !important;}
 
+/* Fix for filter tabs being hidden by hover header */
+html[it-header-position="hover"] #masthead-container[it-search-focus="true"] ~ ytd-page-manager ytd-feed-filter-chip-bar-renderer,
+html[it-header-position="hover"] #masthead-container[it-search-focus="true"] ~ ytd-page-manager ytd-search-sub-menu-renderer {
+  transform: translateY(56px) !important;
+  transition: transform 0.2s ease-in-out;
+  position: relative;
+  z-index: 6;
+}
+html[it-header-position="hover"]  #masthead-container[it-search-focus="true"]  ~ ytd-page-manager  #contents.ytd-section-list-renderer {
+  padding-top: 56px;
+}
 
+/* Ensure filter chips are visible when header is hovered */
+html[it-header-position="hover"] #masthead-container:hover ~ ytd-page-manager ytd-feed-filter-chip-bar-renderer,
+html[it-header-position="hover"] #masthead-container:hover ~ ytd-page-manager ytd-search-sub-menu-renderer {
+  transform: translateY(56px) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 
 /*--------------------------------------------------------------
 # POSITION
@@ -83,9 +101,7 @@ html[data-page-type='video'][it-header-position=hidden_on_video_page] ytd-page-m
 html[it-header-position=hover] ytd-page-manager#page-manager,
 html[data-page-type='video'][it-header-position=hover_on_video_page] ytd-page-manager#page-manager,
 html[it-header-position=hidden][data-page-type='channel'] tp-yt-app-header#header,
-html[data-page-type='channel'][it-header-position=hidden_on_video_page] tp-yt-app-header#header,
 html[it-header-position=hover][data-page-type='channel'] tp-yt-app-header#header,
-html[data-page-type='channel'][it-header-position=hover_on_video_page] tp-yt-app-header#header,
 html[it-header-position=static] ytd-page-manager#page-manager {
 	margin-top: 0;
 }
@@ -126,7 +142,7 @@ html[it-header-position=hover]:not([data-page-type=video]) tp-yt-app-drawer:not(
 html[it-header-position=hidden]:not([data-page-type=video]) tp-yt-app-drawer:not([opened]) #header,
 html[it-header-position=static]:not([data-page-type=video]) tp-yt-app-drawer:not([opened]) #header {
 	position: absolute;
-	visibility: visible;
+	visibility: hidden;
 	left: 240px;
 	top: 120px;
 	padding: 0 16px;

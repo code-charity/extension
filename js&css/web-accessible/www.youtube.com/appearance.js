@@ -156,16 +156,24 @@ ImprovedTube.formatSecond = function (rTime) {
 };
 
 ImprovedTube.playerRemainingDuration = function () {
+	//If is a live stream, do not show remaining time
+	 const button = document.querySelector('button.ytp-live-badge.ytp-button.ytp-live-badge-is-livehead');
+	if (button) 
+		return;	
+
+	var duration = document.querySelector(".ytp-time-duration").innerText;
+	var current = document.querySelector(".ytp-time-current").innerText;
+	document.querySelector('.ytp-time-contents').style.setProperty('display', 'none', 'important');
 	var player = ImprovedTube.elements.player;
-	var rTime = ImprovedTube.formatSecond((player.getDuration() - player.getCurrentTime()).toFixed(0));
+	var rTime = ImprovedTube.formatSecond((player.getDuration() - player.getCurrentTime()).toFixed(0));	
 	var element = document.querySelector(".ytp-time-remaining-duration");
 	if (!element) {
 		var label = document.createElement("span");
-		label.textContent = " (-" + rTime + ")";
+		label.textContent = current + " / " + duration + " / (-" + rTime + ")";
 		label.className = "ytp-time-remaining-duration";
-		document.querySelector(".ytp-time-display").appendChild(label);
-	} else {
-		element.textContent = " (-" + rTime + ")";
+		document.querySelector(".ytp-time-display span").appendChild(label);
+	} else {		
+		return element.textContent = current + " / " + duration + " (-" + rTime + ")";
 	}
 };
 /*------------------------------------------------------------------------------
@@ -339,6 +347,12 @@ ImprovedTube.hideTopProgressBar = function () {
 ImprovedTube.transcript = function (el) { if (ImprovedTube.storage.transcript === true) {
 	const available = el.querySelector('[target-id*=transcript][visibility*=HIDDEN]') || el.querySelector('[target-id*=transcript]')?.clientHeight;
 	if (available) {
+		if (!ImprovedTube.originalFocus) {ImprovedTube.originalFocus = HTMLElement.prototype.focus;}  // Backing up default method. Youtube doesn't use alternatives Element.prototype.scrollIntoView  window.scrollTo  window.scrollBy)
+		ImprovedTube.forbidFocus =  function (ms) { 
+			HTMLElement.prototype.focus = function() {console.log("Preventing YouTube's scripted scrolling for a moment."); }
+			if(document.hidden) ms = 3*ms;
+			setTimeout(function() { HTMLElement.prototype.focus = ImprovedTube.originalFocus; }, ms); 	// Restoring JS's "focus()" 
+		}
 		ImprovedTube.forbidFocus(2100);
 		const descriptionTranscript = el.querySelector('ytd-video-description-transcript-section-renderer button[aria-label]');
 		descriptionTranscript ? descriptionTranscript.click() : el.querySelector('[target-id*=transcript]')?.removeAttribute('visibility');
@@ -351,6 +365,12 @@ ImprovedTube.transcript = function (el) { if (ImprovedTube.storage.transcript ==
 ImprovedTube.chapters = function (el) { if (ImprovedTube.storage.chapters === true) {
 	const available = el.querySelector('[target-id*=chapters][visibility*=HIDDEN]') || el.querySelector('[target-id*=chapters]')?.clientHeight;
 	if (available) {
+		if (!ImprovedTube.originalFocus) { ImprovedTube.originalFocus = HTMLElement.prototype.focus;}  // Backing up default method. Youtube doesn't use alternatives Element.prototype.scrollIntoView  window.scrollTo  window.scrollBy)
+		ImprovedTube.forbidFocus =  function (ms) { 
+			HTMLElement.prototype.focus = function() {console.log("Preventing YouTube's scripted scrolling for a moment."); }
+			if(document.hidden) ms = 3*ms;
+			setTimeout(function() { HTMLElement.prototype.focus = ImprovedTube.originalFocus; }, ms); 	// Restoring JS's "focus()" 
+		}
 		ImprovedTube.forbidFocus(2100);
 		const modernChapters = el.querySelector('[modern-chapters] #navigation-button button[aria-label]');
 		modernChapters ? modernChapters.click() : el.querySelector('[target-id*=chapters]')?.removeAttribute('visibility');
@@ -461,7 +481,33 @@ ImprovedTube.improvedtubeYoutubeButtonsUnderPlayer = function () {
 				section.insertAdjacentElement('afterend', button)
 			}
 
-			if (this.storage.copy_video_id !== false) {
+			if (this.storage.below_player_keyscene !== false) {
+				var button = document.createElement('button'),
+				svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
+				g = document.createElementNS('http://www.w3.org/2000/svg', 'g'),
+				path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+				button.className = 'improvedtube-player-button';
+				button.style.marginRight = '-0.2px';
+				button.dataset.tooltip = 'Key Scene';
+				svg.style.opacity = '.55';
+				svg.setAttributeNS(null, 'viewBox', '0 0 24 24');
+				g.setAttributeNS(null, 'transform', 'translate(5, 0)');				
+				path.setAttributeNS(null, 'd', 'M13 2 L3 14 H10 L8 22 L20 10 H13 L15 2 Z');
+
+				button.onclick = ImprovedTube.jumpToKeyScene;
+
+				g.appendChild(path);
+				svg.appendChild(path);	
+				button.appendChild(svg);
+
+				const screenshotButton = document.querySelector('[data-tooltip="Screenshot"]');
+				screenshotButton.parentElement.insertBefore(button, screenshotButton);
+			}
+
+			let copyVideoUrlButton = this.storage.copy_video_url === true;
+
+			if (this.storage.copy_video_id === true) {
 				var button = document.createElement('button'),
 					svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
 					path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -474,8 +520,12 @@ ImprovedTube.improvedtubeYoutubeButtonsUnderPlayer = function () {
 				button.onclick = function () {
 					svg.style.opacity = '1';
 					const videoURL = ImprovedTube.elements.player?.getVideoUrl();
-					const videoId = videoURL.match(ImprovedTube.regex.video_id)?.[1];
-					navigator.clipboard.writeText(videoId);
+					if (copyVideoUrlButton) {
+						navigator.clipboard.writeText(videoURL);
+					} else {
+						const videoId = videoURL.match(ImprovedTube.regex.video_id)?.[1];
+						navigator.clipboard.writeText(videoId);
+					}					
 					button.dataset.tooltip = 'Copied!';
 					setTimeout(function() {
 						button.dataset.tooltip = 'CopyVideoID';
@@ -494,6 +544,12 @@ ImprovedTube.improvedtubeYoutubeButtonsUnderPlayer = function () {
 ------------------------------------------------------------------------------*/
 ImprovedTube.expandDescription = function (el) {
 	if (this.storage.description === "expanded") {
+		if (!ImprovedTube.originalFocus) { ImprovedTube.originalFocus = HTMLElement.prototype.focus;}  // Backing up default method. Youtube doesn't use alternatives Element.prototype.scrollIntoView  window.scrollTo  window.scrollBy)
+		ImprovedTube.forbidFocus =  function (ms) { 
+			HTMLElement.prototype.focus = function() {console.log("Preventing YouTube's scripted scrolling for a moment."); }
+			if(document.hidden) ms = 3*ms;
+			setTimeout(function() { HTMLElement.prototype.focus = ImprovedTube.originalFocus; }, ms); 	// Restoring JS's "focus()" 
+		}
 		if (el) { 
 			ImprovedTube.forbidFocus(2100); // setTimeout(function () {ImprovedTube.elements.player.focus();}, 2500);  
 			el.click();
@@ -550,6 +606,84 @@ ImprovedTube.dayOfWeek = function () {
 			} // else { element.textContent = days[tempDate.getDay() + 1] + ", "; }
 		}, 4321);
 	}
+};
+/*------------------------------------------------------------------------------
+ SHOW EXACT UPLOAD DATE
+------------------------------------------------------------------------------*/
+// ImprovedTube.exactUploadDate = function () {
+// 	if(this.exact_date==true && this.elements.yt_channel_link) {
+// 		// var xhr = new XMLHttpRequest(),
+// 		// 	key = this.storage["google-api-key"] || ImprovedTube.defaultApiKey,
+// 		// 	id = this.getParam(location.href.slice(location.href.indexOf("?") + 1), "v");
+// 		// xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id + "&key=" + key, false);
+// 		// xhr.send();
+// 		// if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+// 		// 	var response = JSON.parse(xhr.responseText);
+// 		// 	var date = response.items[0].snippet.publishedA;
+// 		// 	var element = ImprovedTube.elements.exact_upload_date || document.createElement("div");
+// 		// 	ImprovedTube.empty(element);
+// 		// 	element.appendChild(document.createTextNode("• " + date.toLocaleDateString()));
+// 		// 	element.className = "it-exact-upload-date";
+// 		// 	ImprovedTube.elements.exact_upload_date = element;
+// 		// 	document.querySelector("#info #info-text").appendChild(element);
+// 		// }
+// 		var xhr = new XMLHttpRequest(),
+// 			key = this.storage["google-api-key"] || ImprovedTube.defaultApiKey,
+			
+// 			id = this.getParam(location.href.slice(location.href.indexOf("?") + 1), "v");
+// 		xhr.addEventListener("load", function () {
+// 			var response = JSON.parse(this.responseText);
+// 				element = ImprovedTube.elements.exact_date || document.createElement("div");
+
+// 			ImprovedTube.empty(element);
+
+// 			if (response.error) {
+// 				element.appendChild(document.createTextNode("• Error: " + response.error.code));
+// 			} else {
+// 				element.appendChild(document.createTextNode("• " + response.items[0].snippet.publishedAt));
+// 			}
+
+// 			element.className = "it-channel-exact-upload-date";
+
+// 			ImprovedTube.elements.exact_date = element;
+
+// 			document.querySelector("#info #info-text").appendChild(element);
+// 		});
+
+// 		xhr.open("GET", "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=" + id + "&key=" + key, true);
+// 		xhr.send();
+// 		console.log("exact date toggle on")
+// 	}
+// 	console.log("exact date tesst")
+// };
+ImprovedTube.exactUploadDate = function () {
+    if (this.storage.exact_date === true) {
+        const xhr = new XMLHttpRequest();
+        const key = this.storage["google-api-key"] || ImprovedTube.defaultApiKey;
+        const id = this.getParam(location.href.slice(location.href.indexOf("?") + 1), "v");
+
+        xhr.addEventListener("load", function () {
+            const response = JSON.parse(this.responseText);
+            const element = ImprovedTube.elements.exact_date || document.createElement("div");
+
+            ImprovedTube.empty(element);
+
+            if (response.error) {
+                element.appendChild(document.createTextNode(`• Error: ${response.error.code}`));
+            } else {
+                const publishedDate = new Date(response.items[0].snippet.publishedAt);
+                element.appendChild(document.createTextNode(`• ${publishedDate.toLocaleDateString()}`));
+            }
+
+            element.className = "it-channel-exact-upload-date";
+            ImprovedTube.elements.exact_date = element;
+            document.querySelector("#info #info-text").appendChild(element);
+        });
+
+        xhr.open("GET", `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${key}`, true);
+        xhr.send();
+        // console.log("exact date toggle on");
+    }
 };
 /*------------------------------------------------------------------------------
  HOW LONG AGO THE VIDEO WAS UPLOADED
@@ -712,3 +846,31 @@ if (ImprovedTube.storage.header_transparent2 === true) {
 		}
 	});
 }
+/*------------------------------------------------------------------------------
+DISABLE LIKES ANIMATION
+------------------------------------------------------------------------------*/
+if (ImprovedTube.storage.disable_likes_animation === true) {
+ImprovedTube.disableLikesAnimation = function () {
+        // Find all like counters with animation
+        var likeAnimated = document.querySelectorAll('yt-animated-rolling-number');
+        likeAnimated.forEach(function (el) {
+            // Replace with static number
+            var staticValue = el.getAttribute('value') || el.textContent;
+            if (staticValue) {
+                var span = document.createElement('span');
+                span.textContent = staticValue;
+                span.style.verticalAlign = 'baseline';
+                span.style.fontVariantNumeric = 'tabular-nums'; // align digits
+                el.replaceWith(span);
+            }
+        });
+    }
+// Call this on page load and on navigation
+(function() {
+    var run = function() { ImprovedTube.disableLikesAnimation && ImprovedTube.disableLikesAnimation(); };
+    document.addEventListener('yt-page-data-updated', run);
+    document.addEventListener('yt-navigate-finish', run);
+    window.addEventListener('load', run);
+    setTimeout(run, 2000); // fallback for late loads
+})();
+};
